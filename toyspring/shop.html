@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+    .pagination { //컨테이너의 클래스
+    display: inline-block;
+    }
+
+    .pagination a { //링크 요소 선택 클래스
+    color: black; //텍스트 블랙
+    float: left; //왼쪽으로 부유
+    padding: 8px 16px; //여백
+    text-decoration: none; //장식 제거
+    border: 1px solid #ddd; //회색 테두리
+    }
+
+    .pagination a.active { //활성화 페이지 요소
+    background-color: #4CAF50; //활성화링크 녹색
+    color: white; //텍스트 흰색
+    border: 1px solid #4CAF50; //녹색테두리
+    }
+
+    .pagination a:hover:not(.active) { //마우스를 페이지 번호위에 가져다놓으면 회색으로 표시
+    background-color: #ddd;
+    }
+    </style>
+</head>
+<body>
+<a href="/upload.html">올리기</a> <br/>
+<table border="1" id="bookTable"> //책 목록
+
+</table>
+
+
+<div class="pagination"> //페이지 버튼
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () { //콜백함수
+        const bookTable = document.getElementById("bookTable");
+        const pagination = document.querySelector(".pagination");
+
+        const db = [
+            {idx: "@idx0", image: "@image0", title: "@title0"},
+            {idx: "@idx1", image: "@image1", title: "@title1"},
+            {idx: "@idx2", image: "@image2", title: "@title2"},
+            {idx: "@idx3", image: "@image3", title: "@title3"},
+            {idx: "@idx4", image: "@image4", title: "@title4"},
+            {idx: "@idx5", image: "@image5", title: "@title5"},
+            {idx: "@idx6", image: "@image6", title: "@title6"},
+            {idx: "@idx7", image: "@image7", title: "@title7"},
+            {idx: "@idx8", image: "@image8", title: "@title8"},
+            {idx: "@idx9", image: "@image9", title: "@title9"},
+            {idx: "@idx10", image: "@image10", title: "@title10"},
+            {idx: "@idx11", image: "@image11", title: "@title11"},
+            {idx: "@idx12", image: "@image12", title: "@title12"},
+            {idx: "@idx13", image: "@image13", title: "@title13"},
+            {idx: "@idx14", image: "@image14", title: "@title14"},
+            {idx: "@idx15", image: "@image15", title: "@title15"},
+            {idx: "@idx16", image: "@image16", title: "@title16"},
+            {idx: "@idx17", image: "@image17", title: "@title17"},
+            {idx: "@idx18", image: "@image18", title: "@title18"},
+            {idx: "@idx19", image: "@image19", title: "@title19"},
+            {idx: "@idx20", image: "@image20", title: "@title20"},
+            {idx: "@idx21", image: "@image21", title: "@title21"},
+            {idx: "@idx22", image: "@image22", title: "@title22"},
+            {idx: "@idx23", image: "@image23", title: "@title23"},
+            {idx: "@idx24", image: "@image24", title: "@title24"},
+            {idx: "@idx25", image: "@image25", title: "@title25"},
+            {idx: "@idx26", image: "@image26", title: "@title26"},
+            {idx: "@idx27", image: "@image27", title: "@title27"},
+            {idx: "@idx28", image: "@image28", title: "@title28"},
+        ];
+
+        // 책 데이터
+        const books = [
+        ];
+
+        for(var i=0; i<Number("@count"); i++){
+            books.push(db[i])
+        }
+
+        // 한 페이지에 표시할 책의 수
+        const booksPerPage = 4;
+
+        // 현재 페이지
+        let currentPage = 1;
+
+        // 페이지 수 계산
+        let totalPages = Math.ceil(books.length / booksPerPage);
+
+        // 책을 페이지에 따라 분할하여 저장하는 배열
+        let pages = [];
+
+        // 페이지 버튼 생성
+        function createPaginationButtons() {
+            pagination.innerHTML = "";
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement("a");
+                pageButton.href = "#";
+                pageButton.textContent = i;
+                pageButton.classList.add("pageLink");
+                pagination.appendChild(pageButton);
+            }
+
+            const pageLinks = document.querySelectorAll(".pageLink");
+            pageLinks.forEach(button => {
+                button.addEventListener("click", () => {
+                    currentPage = parseInt(button.textContent);
+                    renderBooks();
+                    activatePageButton(button);
+                });
+            });
+        }
+
+        // 현재 페이지 버튼 활성화
+        function activatePageButton(button) {
+            const pageLinks = document.querySelectorAll(".pageLink");
+            pageLinks.forEach(link => {
+                link.classList.remove("active");
+            });
+            button.classList.add("active");
+        }
+
+        // 책 표시
+        function renderBooks() {
+            // 이전에 표시된 책 제거
+            bookTable.innerHTML = "";
+
+            // 현재 페이지에 해당하는 책 가져오기
+            const booksToDisplay = pages[currentPage - 1];
+            booksToDisplay.forEach(book => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${book.idx}</td>
+                    <td><img src="${book.image}" width="40"></td>
+                    <td><a href="/post?idx=${book.idx}">${book.title}</a></td>
+                `;
+                bookTable.appendChild(row);
+            });
+        }
+
+        // 페이지 분할
+        function splitBooksIntoPages() {
+            pages = [];
+            let pageStart = 0;
+            let pageEnd = booksPerPage;
+
+            while (pageStart < books.length) {
+                pages.push(books.slice(pageStart, pageEnd));
+                pageStart += booksPerPage;
+                pageEnd += booksPerPage;
+            }
+        }
+
+        // 초기 설정
+        splitBooksIntoPages();
+        createPaginationButtons();
+        renderBooks();
+        activatePageButton(document.querySelector(".pageLink"));
+    });
+</script>
+
+</body>
+</html>
